@@ -1,0 +1,11 @@
+{% for note in notes %}
+        <div>
+            <b>
+                {{ note.title }}
+            </b>
+
+        </div>
+        <div>
+            {{ note.content | raw }}
+        </div>
+{% endfor %}

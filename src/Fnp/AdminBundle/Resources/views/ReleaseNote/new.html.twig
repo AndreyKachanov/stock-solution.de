@@ -1,0 +1,35 @@
+{% extends "FnpAdminBundle:Default:base.customers.html.twig" %}
+{% block title %}Release note creation{% endblock %}
+{% block pageId %}new-release-note{% endblock %}
+{% block search %}{% include "FnpAdminBundle:Default:search.html.twig" %}{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+
+    <div>
+        {{ form_label(form.title) }}
+        {{ form_widget(form.title) }}
+        {{ form_errors(form.title) }}
+    </div>
+
+    <div>
+        {{ form_label(form.content) }}
+        {{ form_widget(form.content) }}
+        {{ form_errors(form.content) }}
+    </div>
+<div class="navigation_btn" style="justify-content: flex-end">
+    <button type="submit" class="btn btn-primary new_btn_post">
+        <i class="fa fa-save" aria-hidden="true"></i> Save
+    </button>
+
+    {{ form_widget(form.saveAndCreateNew, {label: 'Save and create new', attr: {class: 'btn btn-primary new_btn_post'}}) }}
+    <a href="{{ path('admin_release_note_index') }}" class="btn btn-link new_btn_post" style="margin-right: 0">
+        Cancel
+    </a>
+</div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+

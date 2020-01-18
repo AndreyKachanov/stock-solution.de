@@ -1,0 +1,179 @@
+{% extends "FnpMainBundle:Default:base.html.twig" %}
+{% block title %}F&P Blog{% endblock %}
+{% block styleshets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/materialPreloader.css') }}">
+{% endblock %}
+{% block pageId %}concept-page{% endblock %}
+{% block body %}
+    <div id="preloader">
+        <div id="preloader-child" class="center-align">
+            <img src="{{ asset("images/logo_fnp_3.png") }}" alt="logo white"/>
+            <div class="progress">
+                <div class="indeterminate"></div>
+            </div>
+        </div>
+    </div>
+    <div class="container_fluid">
+        <div class="container">
+            <div class="blog_title">
+                {% if (blog_title) %}
+                    {{ blog_title.content | raw }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <section class="blog_body">
+        <div class="container">
+            <div class="row">
+                {% for post in posts %}
+
+                    {% if loop.index == 1 %}
+                        <div class="col s12 l8">
+                            <a href="{{ path('blog_post_show', {id: post.id}) }}">
+                                <div class="first_blog_box bg_img_blog"
+                                     style="background-image: url({{ asset('uploads/blog/post_main_images/') }}{{ post.image  ?? 'no-photo.png' }})">
+                                    <div class="hover_block">
+                                    </div>
+                                    <article class="post post_about_first">
+                                        <div class="blog_content">
+                                            <div class="post_category_name">{{ post.category.category }}</div>
+                                            <a class="details_blog_link"
+                                               href="{{ path('blog_post_show', {id: post.id}) }}">
+                                                <span class="ellipsis_title">{{ post.title }}</span>
+                                            </a>
+                                            <div class="footer_inform">
+                                                <div class="post-metadata">
+                                                    <span class="metadata post_date">{{ post.createdAt | date('d.m.Y') }}</span>
+                                                </div>
+                                                <a class="comments_count" disqus-identifier="{{ post.id }}"
+                                                   href="{{ path('blog_post_show', {id: post.id}) }}#disqus_thread"></a>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            </a>
+                        </div>
+                    {% elseif loop.index == 2 %}
+                        <div class="col s12 l4">
+                            <a href="{{ path('blog_post_show', {id: post.id}) }}">
+                                <div class="second_blog_box sm_blog">
+                                    <div class="sm_block_img"
+                                         style="background-image: url({{ asset('uploads/blog/post_main_images/') }}{{ post.image  ?? 'no-photo.png' }})">
+                                    </div>
+                                    <article class="post">
+                                        <div class="blog_content">
+                                            <div class="sm_category_name">{{ post.category.category }}</div>
+                                            <div>
+                                                <a class="sm_details_link"
+                                                   href="{{ path('blog_post_show', {id: post.id}) }}">
+                                                    <span class="ellipsis_title">{{ post.title }}</span>
+                                                </a>
+                                            </div>
+                                            <div class="sm_post_content ellipsis_content">{{ post.content|striptags|slice(0, 200) }}
+                                                ...
+                                            </div>
+                                            <div class="footer_inform">
+                                                <div class="post-metadata">
+                                                    <span class="metadata post_date">{{ post.createdAt | date('d.m.Y') }}</span>
+                                                </div>
+                                                <a class="comments_count" disqus-identifier="{{ post.id }}"
+                                                   href="{{ path('blog_post_show', {id: post.id}) }}#disqus_thread"></a>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            </a>
+                        </div>
+                        {#{% elseif loop.index == 8  %}#}
+                        {#<div class="col s12 l4">#}
+                        {#<a href="{{ path('blog_post_show', {id: post.id}) }}">#}
+                        {#<div class="last_blog_box bg_img_blog" style="background-image: url({{ asset('uploads/blog/post_main_images/') }}{{ post.image  ?? 'no_preview.png' }})">#}
+                        {#<div class="hover_block">#}
+                        {#</div>#}
+                        {#<article class="post post_about_first">#}
+                        {#<div class="blog_content">#}
+                        {#<div class="post_category_name">{{ post.category.category }}</div>#}
+                        {#<a class="details_blog_link" href="{{ path('blog_post_show', {id: post.id}) }}">#}
+                        {#<span class="ellipsis_title">{{ post.title }}</span>#}
+                        {#</a>#}
+                        {#<div class="footer_inform">#}
+                        {#<div class="post-metadata">#}
+                        {#<span class="metadata post_date">{{ post.createdAt | date('d.m.Y') }}</span>#}
+                        {#</div>#}
+                        {#<a class="comments_count" disqus-identifier="{{ post.id }}" href="{{ path('blog_post_show', {id: post.id}) }}#disqus_thread"></a>#}
+                        {#</div>#}
+                        {#</div>#}
+                        {#</article>#}
+                        {#</div>#}
+                        {#</a>#}
+                        {#</div>#}
+                    {% else %}
+                        <div class="col s12 l4">
+                            <a href="{{ path('blog_post_show', {id: post.id}) }}">
+                                <div class="second_blog_box sm_blog">
+                                    <div class="sm_block_img"
+                                         style="background-image: url({{ asset('uploads/blog/post_main_images/') }}{{ post.image  ?? 'no-photo.png' }})">
+                                    </div>
+                                    <article class="post">
+                                        <div class="blog_content">
+                                            <div class="sm_category_name">{{ post.category.category }}</div>
+                                            <div>
+                                                <a class="sm_details_link"
+                                                   href="{{ path('blog_post_show', {id: post.id}) }}">
+                                                    <span class="ellipsis_title">{{ post.title }}</span>
+                                                </a>
+                                            </div>
+                                            <div class="sm_post_content ellipsis_content">{{ post.content|striptags|slice(0, 200) }}
+                                                ...
+                                            </div>
+                                            <div class="footer_inform">
+                                                <div class="post-metadata">
+                                                    <span class="metadata post_date">{{ post.createdAt | date('d.m.Y') }}</span>
+                                                </div>
+                                                <a class="comments_count" disqus-identifier="{{ post.id }}"
+                                                   href="{{ path('blog_post_show', {id: post.id}) }}#disqus_thread"></a>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            </a>
+                        </div>
+
+                    {% endif %}
+
+
+                {% else %}
+                    <div class="well nothing_to_show">Posts not found.</div>
+                {% endfor %}
+            </div>
+            <div class="navigation">
+                {{ knp_pagination_render(posts) }}
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script id="dsq-count-scr" src="//{{ disqus }}/count.js" async></script>
+    <script type="text/javascript" src="{{ asset('js/preloader.js') }}"></script>
+    <script>
+        preloaderStart();
+        $(document).ready(function () {
+            $('.blog_li').addClass('active_point_menu');
+
+            $('.blog_title').children().addClass('blog_title_text');
+            var prev_btn = $('.pagination li.active').text().trim();
+            if (prev_btn == 1) {
+                $('.pagination li:first-child').hide();
+            }
+        });
+        $(window).load(function () {
+            preloaderStop();
+        });
+    </script>
+
+{% endblock %}

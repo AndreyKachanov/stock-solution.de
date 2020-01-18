@@ -1,0 +1,100 @@
+{% extends "FnpMainBundle:Default:base.html.twig" %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block styleshets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/materialPreloader.css') }}">
+{% endblock %}
+{% block pageId %}concept-page{% endblock %}
+{% block body %}
+
+    <a href="{{ path('blog_index') }}" class="btn-floating btn-large waves-effect waves-light back_to_posts">
+        <i class="material-icons">keyboard_arrow_left</i>
+    </a>
+    <div class="container">
+        <div class="row">
+            {% if post %}
+                <article class="post">
+                    <div class="post_title_img" style="background-image: url({{ asset('uploads/blog/post_main_images/') }}{{ post.image  ?? 'no-photo.png' }})">
+                        <div class="post_discript">
+                            <span class="post_name">{{ post.category.category }}</span>
+                            <h3 class="post_title">
+                                {{ post.title }}
+                            </h3>
+                            <div class="post_footer_inform">
+                            <span class="post_date">
+                                {{ post.createdAt | date('d.m.Y') }}
+                            </span>
+                                <a class="post_count" disqus-identifier="{{ post.id }}" href="{{ path('blog_post_show', {id: post.id}) }}#disqus_thread">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="post_content">{{ post.content | raw }}</div>
+                </article>
+            {% else %}
+                <div class="well">Post not found.</div>
+            {% endif %}
+            <div class="navigation_btn">
+                {% if prev_post %}
+                        <a class="prev_post" href="{{ path('blog_post_show', {id: prev_post.id}) }}">
+                                <img src="{{ asset('images/prev.png') }}" alt="prev">
+                                Prev
+                        </a>
+                {% endif %}
+
+                {% if next_post %}
+                        <a class="next_post" href="{{ path('blog_post_show', {id: next_post.id}) }}">
+                            Next
+                            <img style="transform: rotate(180deg);" src="{{ asset('images/prev.png') }}" alt="prev">
+                        </a>
+                {% endif %}
+            </div>
+
+
+            <article>
+                <div id="disqus_thread"></div>
+                <script>
+
+                    var disqus_config = function () {
+                        this.page.url = "{{ uri }}";
+                        this.page.identifier = {{ post.id }};
+                    };
+                    (function() {
+                        var d = document, s = d.createElement('script');
+                        s.src = '//{{ disqus }}/embed.js';
+                        s.setAttribute('data-timestamp', +new Date());
+                        (d.head || d.body).appendChild(s);
+                    })();
+
+                </script>
+            </article>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script id="dsq-count-scr" src="//{{ disqus }}/count.js" async></script>
+    <script>
+        $(document).ready(function () {
+            $('.blog_li').addClass('active_point_menu');
+
+            if ($('.navigation_btn>.prev_post').length == 0) {
+                $('.navigation_btn').css('justify-content', 'flex-end')
+            }
+            var pattern_text = /[A-Za-zА-Яа-яЁё]+$/;
+            var fl = $('.post_content>p:first').html().charAt(0);
+            console.log(fl);
+            console.log(pattern_text.test(fl));
+            if(pattern_text.test(fl)){
+                $('.post_content>p:first').html('<span class="first_letter"></span>' + $('.post_content>p:first').html().substring(1));
+                $('.first_letter').html(fl);
+            }else{
+                console.log("<>")
+            }
+        })
+
+    </script>
+{% endblock %}

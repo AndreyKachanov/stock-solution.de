@@ -1,0 +1,101 @@
+{% extends "FnpAdminBundle:Default:base.html.twig" %}
+{% block search %}{% include "FnpAdminBundle:Default:search.html.twig" %}{% endblock %}
+{% block pageId %}post-list{% endblock %}
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        {% if app.user.role.hasAccessToAlias("new_post") %}
+        <a href="{{ path('admin_post_new') }}" class="btn-floating btn-large waves-effect waves-light tooltipped add_post_category" data-position="top" data-delay="50" data-tooltip="New post" href="{{ path('admin_post_new') }}">
+            <i class="material-icons">add</i>
+        </a>
+        {% endif %}
+    {% for post in posts %}
+        <div class="col s12 l6">
+            <div class="first_blog_box bg_img_blog" style="background-image: url({{ asset('uploads/blog/post_main_images/') }}{{ post.image  ?? 'no-photo.png' }})">
+                <div class="hover_block">
+                </div>
+                <article class="post post_about_first">
+                    <div class="blog_content">
+                        <div class="post_category_name">{{ post.category.category }}</div>
+                        <a class="details_blog_link" href="{{ path('blog_post_show', {id: post.id}) }}">
+                            <span class="ellipsis_title">{{ post.title }}</span>
+                        </a>
+                        <div class="footer_inform">
+                            <div class="post-metadata">
+                                <span class="metadata post_date">{{ post.createdAt | date('d.m.Y') }}</span>
+                            </div>
+                            <a class="comments_count" disqus-identifier="{{ post.id }}" href="{{ path('blog_post_show', {id: post.id}) }}#disqus_thread"></a>
+                        </div>
+                        <div class="action_btn_row">
+                            {% if app.user.role.hasAccessToAlias("edit_post") %}
+                            <a href="{{ path('admin_post_edit', {'id': post.id}) }}" class="btn list_btn_post circle_btn hint" data-hint="Edit">
+                                <i class="material-icons">create</i>
+                            </a>
+                            {% endif %}
+                            <a href="{{ path('admin_post_preview', {'id': post.id}) }}" class="btn list_btn_post circle_btn hint" data-hint="Preview">
+                                <i class="material-icons">visibility</i>
+                            </a>
+                            {% if app.user.role.hasAccessToAlias("delete_post") %}
+                            <a onclick="if(!confirm('Are you sure you want to remove this post?')){return false;}" href="{{ path('admin_post_delete', { 'id': post.id }) }}" class="btn list_btn_post circle_btn hint" data-hint="Delete">
+                                <i class="material-icons">delete</i>
+                            </a>
+                            {% endif %}
+                            <div class="switch activate_post_switch">
+                                <label class="post_active_label hint" data-hint="Status">
+                                    <input class="published" data-post="{{ post.id }}" type="checkbox" {% if(post.isPublished == true) %}checked{% endif %}>
+                                    <span class="lever"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    {% else %}
+        <div class="well nothing_to_show">Posts not found.</div>
+    {% endfor %}
+
+        </div>
+        <div class="navigation">
+            {{ knp_pagination_render(posts) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        $(document).ready(() => {
+            $(".published").change(function () {
+                var status = 0;
+                var post = $(this).data("post");
+
+                if ($(this).is(':checked')) {
+                    status = 1;
+                }
+                else {
+                    status = 0;
+                }
+
+                var changeIsPublishedtPath = "{{ path('admin_post_is_published', {'id': 'J', 'status': 'S'}) }}";
+                var url = changeIsPublishedtPath.replace("J", post).replace("S", status);
+
+                $.ajax({
+                    type: "get",
+                    url: url,
+                    success: function (result) {
+                        if (status == 1)
+                            Materialize.toast('Post published successfully!', 4000, 'green_toast_post');
+                        else
+                            Materialize.toast('Post unpublished!', 4000, 'yellow_toast_post');
+                    }
+                });
+            });
+        });
+    </script>
+
+{% endblock %}
+
+

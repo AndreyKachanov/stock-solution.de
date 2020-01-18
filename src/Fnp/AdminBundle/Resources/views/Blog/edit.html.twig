@@ -1,0 +1,124 @@
+{% extends "FnpAdminBundle:Default:base.customers.html.twig" %}
+{% block title %}Edit post - {{ post.title }}{% endblock %}
+{% block search %}{% include "FnpAdminBundle:Default:search.html.twig" %}{% endblock %}
+{% block pageId %}edit-post{% endblock %}
+{% block body %}
+
+    {{ form_start(form) }}
+    <div class="img_show"
+         style="background:url({{ asset('uploads/blog/post_main_images/') }}{{ post.image  ?? 'no-photo.png' }})">
+        {{ form_label(form.image,'', { 'label_attr': {'class': 'tooltipped','data-position':'right','data-delay':50,'data-tooltip':'Add new, max size (1920x1080)'} }) }}
+        {{ form_widget(form.image) }}
+        {{ form_errors(form.image) }}
+        <a class="delete_blog_img hint" href="#" data-hint="delete image">
+            <i class="material-icons">close</i>
+        </a>
+    </div>
+    <div>
+        {{ form_label(form.category) }}
+        {{ form_widget(form.category) }}
+        {{ form_errors(form.category) }}
+    </div>
+    <div>
+        {{ form_label(form.title) }}
+        {{ form_widget(form.title) }}
+        {{ form_errors(form.title) }}
+    </div>
+    <div>
+        {{ form_label(form.content) }}
+        {{ form_widget(form.content) }}
+        {{ form_errors(form.content) }}
+    </div>
+    <div class="navigation_btn" style="justify-content: flex-end">
+        <button type="submit" class="btn new_btn_post save_post">
+            <i class="fa fa-save" aria-hidden="true"></i> Save
+        </button>
+
+        <a href="{{ path('admin_post_index') }}" class="btn btn-link new_btn_post" style="margin-right: 0">
+            Cancel
+        </a>
+    </div>
+
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(() => {
+            $('.img_show ul li').addClass('valid_img');
+
+            $('select').material_select();
+            var showImg = (src) => {
+                if (src != null && src != undefined) {
+                    $('.img_show').css('background', 'url(' + URL.createObjectURL(src) + ')');
+                }
+            }
+
+            $('#post_image').change((event) => {
+                showImg(event.target.files[0]);
+            });
+
+            function validateCategoryChoice() {
+                let isValidation = true;
+                $('select.validate').each(function () {
+                    let elValidate = $(this);
+                    let val = $(this).val();
+                    if (!!val && val.length > 0) {
+                        elValidate.closest('.select-wrapper').removeClass('form-error');
+                    } else {
+                        isValidation = false;
+                        elValidate.closest('.select-wrapper').addClass('form-error');
+                    }
+                });
+                return isValidation;
+            };
+
+            function validateEditor() {
+                let isValidation = true;
+                let editorValue = CKEDITOR.instances['post_content'].getData();
+                if (editorValue == null || editorValue == undefined || editorValue == "") {
+                    isValidation = false;
+                    $('.cke_inner').addClass('form-error');
+                } else {
+                    isValidation = true;
+                    $('.cke_inner').removeClass('form-error')
+                }
+                return isValidation;
+            };
+
+            $('.save_post').click((e) => {
+                if (validateCategoryChoice() && validateEditor()) {
+                    return;
+                } else {
+                    e.preventDefault();
+                }
+            });
+            $('.delete_blog_img').click(function (e) {
+                if(confirm('Are you sure you want to delete this image?')){
+                    e.preventDefault();
+                    $('.img_show').css('background-image', 'url(' + '/uploads/blog/post_main_images/no-photo.png' + ')');
+                    $('#post_image').val('');
+                    Materialize.toast('Image successfully deleted', 4000, 'green_toast_post');
+                }
+                else{
+                    return;
+                }
+
+                let path = "{{ path('admin_post_delete_image', {'id': post.id}) }}";
+                {% if post.image %}
+                    $.ajax({
+                        type: "get",
+                        url: path,
+                        success: function (data) {
+                            console.log("No photo");
+                        }
+                    });
+                {% endif %}
+            });
+        });
+    </script>
+
+{% endblock %}

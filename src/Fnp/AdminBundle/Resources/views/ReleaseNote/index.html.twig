@@ -1,0 +1,68 @@
+{% extends "FnpAdminBundle:Default:base.customers.html.twig" %}
+{% block search %}{% include "FnpAdminBundle:Default:search.html.twig" %}{% endblock %}
+{% block pageId %}release-note{% endblock %}
+{% block body %}
+    <div>
+        <a class="btn-floating btn-large waves-effect waves-light tooltipped add_post_category" href="{{ path('admin_release_note_new') }}" data-position="top" data-delay="50" data-tooltip="New note">
+            <i class="material-icons">add</i></a>
+    </div>
+<div class="container">
+    <div class="row">
+        <table>
+            <thead>
+            <tr>
+                <th>Description</th>
+                <th style="text-align:right;">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for note in notes %}
+                <tr>
+                    <td>
+                        <a class="note_title" href="{{ path('admin_release_note_edit', {id: note.id}) }}">
+                        {{ note.title }}
+                        </a>
+                        <span class="metadata"><i class="fa fa-calendar"></i> {{ note.createdAt | date('Y-m-d') }}</span>
+                    </td>
+                    <td style="text-align: right">
+                        <a href="{{ path('admin_release_note_edit', {id: note.id}) }}">
+                            <i class="material-icons  blue-grey-text darken-3 hint" data-hint="edit">create</i>
+                        </a>
+                        <a href="{{ path('admin_release_note_delete', { 'id': note.id }) }}"
+                           onClick="javascript: return confirm('Do you really want to delete the post?')">
+                            <i class="material-icons blue-grey-text darken-3 hint" data-hint="Delete">delete</i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
+    {#{% for note in notes %}#}
+        {#<article class="post">#}
+            {#<h2>#}
+                {#<a href="{{ path('admin_release_note_edit', {id: note.id}) }}">#}
+                    {#{{ note.title }}#}
+                {#</a>#}
+            {#</h2>#}
+
+            {#<p class="post-metadata">#}
+                {#<span class="metadata"><i class="fa fa-calendar"></i> {{ note.createdAt | date('Y-m-d') }}</span>#}
+            {#</p>#}
+
+
+            {#<a href="{{ path('admin_release_note_edit', {id: note.id}) }}" class="btn btn-sm btn-primary">#}
+                {#Edit note#}
+            {#</a>#}
+        {#</article>#}
+    {#{% else %}#}
+        {#<div class="well">Nones not found.</div>#}
+    {#{% endfor %}#}
+    {#<div class="navigation">#}
+        {#{{ knp_pagination_render(notes) }}#}
+    {#</div>#}
+{% endblock %}
+
+

@@ -1,0 +1,68 @@
+{% extends "FnpMainBundle:Default:base.html.twig" %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block styleshets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/materialPreloader.css') }}">
+{% endblock %}
+{% block pageId %}concept-page{% endblock %}
+{% block body %}
+
+    <a href="{{ path('admin_post_index') }}" class="btn-floating btn-large waves-effect waves-light back_to_posts">
+        <i class="material-icons">keyboard_arrow_left</i>
+    </a>
+    <section class="prev_post_body">
+        <div class="container">
+            <div class="row">
+                {% if post %}
+                    <article class="post">
+                        <div class="post_title_img" style="background-image: url({{ asset('uploads/blog/post_main_images/') }}{{ post.image  ?? 'no-photo.png' }})">
+                            <div class="post_discript">
+                                <span class="post_name">{{ post.category.category }}</span>
+                                <h3 class="post_title">
+                                    {{ post.title }}
+                                </h3>
+                                <div class="post_footer_inform">
+                            <span class="post_date">
+                                {{ post.createdAt | date('d.m.Y') }}
+                            </span>
+                                    <span class="post_count">
+                                    0 Comments
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="post_content">{{ post.content | raw }}</div>
+                    </article>
+                {% else %}
+                    <div class="well">Post not found.</div>
+                {% endif %}
+
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+            if ($('.navigation_btn>.prev_post').length == 0) {
+                $('.navigation_btn').css('justify-content', 'flex-end')
+            }
+            var pattern_text = /[A-Za-zА-Яа-яЁё]+$/;
+            var fl = $('.post_content>p:first').html().charAt(0);
+            console.log(fl);
+            console.log(pattern_text.test(fl));
+            if(pattern_text.test(fl)){
+                $('.post_content>p:first').html('<span class="first_letter"></span>' + $('.post_content>p:first').html().substring(1));
+                $('.first_letter').html(fl);
+            }else{
+                console.log("<>")
+            }
+
+        })
+
+    </script>
+{% endblock %}

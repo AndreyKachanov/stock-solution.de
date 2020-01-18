@@ -1,0 +1,129 @@
+{% extends "FnpAdminBundle:Default:base.html.twig" %}
+{% block title %}Categories post{% endblock %}
+{% block search %}{% include "FnpAdminBundle:Default:search.html.twig" %}{% endblock %}
+{% block pageId %}category-list{% endblock %}
+{% block body %}
+    {% if app.user.role.hasAccessToAlias("new_category") %}
+    <a class="btn-floating btn-large waves-effect waves-light tooltipped add_post_category" data-position="top" data-delay="50" data-tooltip="New category" href="{{ path('admin_post_category_new') }}">
+        <i class="material-icons">add</i>
+    </a>
+    {% endif %}
+    <div class="container">
+        <div class="row">
+            <table>
+            <thead>
+            <tr>
+                <th>Description</th>
+                <th style="text-align:right;">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for category in categories %}
+                <tr>
+                    <td>
+                        <a data-id="{{ category.id }}" style="color: #000;" href="{{ path('admin_post_category_edit', {id: category.id}) }}">
+                        {{ category.category }}
+                        </a>
+                    </td>
+                    <td style="text-align: right">
+                        {% if app.user.role.hasAccessToAlias("edit_category") %}
+                        <a href="{{ path('admin_post_category_edit', {id: category.id}) }}" class="edit_btn_category">
+                            <i class="material-icons  blue-grey-text darken-3 hint" data-hint="edit">create</i>
+                        </a>
+                        {% endif %}
+                        {% if app.user.role.hasAccessToAlias("delete_category") %}
+                        <a class="delete-category" data-id="{{ category.id }}"
+                                       data-post-count="{{ path('count_post_category', {'id' : category.id}) }}"
+                                       href="{{ path('admin_post_category_delete', {'id' : category.id}) }}">
+                            <i class="material-icons blue-grey-text darken-3 hint" data-hint="Delete">delete</i>
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+    </div>
+
+{#Modal window for delete post category#}
+<div id="modal1" class="modal modal-fixed-footer">
+    <form id="category" action="{{ path('admin_post_category_delete') }}" method="post">
+        <div class="modal-content">
+            <div class="col s12">
+                <h5>Count of posts in this category - <span id="count-posts"></span></h5>
+                <h5>Select the category you want to add those posts<span id="category-name"></span></h5>
+            </div>
+
+            <div class="input-field col s12">
+                <select id="type1" name="new_category" required>
+                    <option value="" disabled selected>Select category</option>
+                    {% for category in categories %}
+                        <option data-id="{{ category.id }}" value="{{ category.category }}">{{ category.category }}</option>
+                    {% endfor %}
+                </select>
+                <input id="deleted-category" type="hidden" name="delete">
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn waves-effect waves-light accentBG delete_category" type="submit" name="action">assign
+            </button>
+            <a href="#!" style="margin-right: 15px" class="btn waves-effect waves-light delete_category modal-close">Cancel</a>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    $('select').material_select();
+        $('.delete-category').on('click', function (e) {
+            e.preventDefault();
+            var countPostUrl = $(this).data('postCount');
+            var categoryId = $(this).data('id');
+            class Category {
+                constructor(name, id) {
+                    this.name = name;
+                    this.id = id;
+                }
+            }
+            let categories = [];
+
+            {% for category in categories %}
+            categories.push(new Category('{{ category.category|raw }}', '{{ category.id }}'));
+            {% endfor %}
+            // console.log(categories);
+            const idx = categories.findIndex(c => c.id == categoryId);
+
+            categories.splice(idx, 1);
+
+            const $targetSelect = $('#type1');
+            $targetSelect.material_select('destroy');
+            $targetSelect.empty();
+
+            $targetSelect.append('<option value="" disabled selected>Select category</option>');
+            categories.forEach(c => {
+                $targetSelect.append(new Option(c.name, c.name));
+            });
+            $targetSelect.trigger('contentChanged');
+            $targetSelect.material_select('update');
+
+            $.post(countPostUrl)
+                .done(function (data) {
+                    console.log(data);
+                    if (data === false) {
+                        window.location.reload();
+                    } else {
+                    $('#count-posts').text(data);
+                    $('#deleted-category').val(categoryId);
+                    $('#modal1').modal('open');
+                    }
+                });
+
+        })
+
+    </script>
+{% endblock %}
